@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
-    <title>Surprise Me — CineMatch</title>
+    <title>CineMatch — Movie & TV Show Recommender</title>
 </head>
 <body>
     <header class="site-header">
         <a class="brand" href="/">
-            <span class="brand-mark">C</span>
+            <img
+                class="brand-mark"
+                src="{{ url_for('static', path='img/icons/clapperboard.svg') }}"
+                alt=""
+            >
             <span>CineMatch</span>
         </a>
 
@@ -42,24 +46,39 @@
             <button type="submit">Surprise Me</button>
         </form>
 
-        {% if surprise_items %}
-            <h3>How about these?</h3>
+        {% if surprise_item %}
+            <h3>Recommendation for you:</h3>
             <div class="poster-grid">
-                {% for item in surprise_items %}
-                    <article class="poster-card">
-                        {% if item.poster_url %}
-                            <img src="{{ item.poster_url }}"
-                                 alt="Poster for {{ item.title or item.name }}">
+                <article class="poster-card" tabindex="0">
+                    <div class="poster-art">
+                        {% if surprise_item.poster_url %}
+                            <img src="{{ surprise_item.poster_url }}"
+                                 alt="Poster for {{ surprise_item.title }}">
                         {% else %}
                             <div class="poster-placeholder">No poster</div>
                         {% endif %}
-                        <p>{{ item.title or item.name }}</p>
-                        <details>
-                            <summary>View details</summary>
-                            <p>{{ item.overview or "No description available." }}</p>
-                        </details>
-                    </article>
-                {% endfor %}
+                        <div class="poster-badges">
+                            {% if surprise_item.rating != "N/A" %}
+                                <span class="poster-rating">★ {{ surprise_item.rating }}</span>
+                            {% endif %}
+                            {% if surprise_item.year and surprise_item.year != "N/A" %}
+                                <span class="poster-year">{{ surprise_item.year }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="poster-hover-details">
+                            {% if surprise_item.genres_text and surprise_item.genres_text != "N/A" %}
+                                <p class="poster-genres">{{ surprise_item.genres_text }}</p>
+                            {% endif %}
+                            <p class="poster-overview">{{ surprise_item.overview }}</p>
+                        </div>
+                    </div>
+                    <p>
+                        {{ surprise_item.title }}
+                        {% if surprise_item.year and surprise_item.year != "N/A" %}
+                            ({{ surprise_item.year }})
+                        {% endif %}
+                    </p>
+                </article>
             </div>
         {% endif %}
     </main>
