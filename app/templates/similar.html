@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
-    <title>Find Similar — CineMatch</title>
+    <title>CineMatch — Movie & TV Show Recommender</title>
 </head>
 <body>
     <header class="site-header">
         <a class="brand" href="/">
-            <span class="brand-mark">C</span>
+            <img
+                class="brand-mark"
+                src="{{ url_for('static', path='img/icons/clapperboard.svg') }}"
+                alt=""
+            >
             <span>CineMatch</span>
         </a>
 
@@ -66,11 +70,30 @@
                             <label class="title-card">
                                 <input type="radio" name="selected_id"
                                     value="{{ item.id }}" required>
-                                <img class="title-card-poster"
-                                    src="{{ item.poster_url }}"
-                                    alt="Poster for {{ item.title or item.name }}">
+                                <span class="poster-art">
+                                    <img class="title-card-poster"
+                                        src="{{ item.poster_url }}"
+                                        alt="Poster for {{ item.title }}">
+                                    <span class="poster-badges">
+                                        {% if item.rating != "N/A" %}
+                                            <span class="poster-rating">★ {{ item.rating }}</span>
+                                        {% endif %}
+                                        {% if item.year and item.year != "N/A" %}
+                                            <span class="poster-year">{{ item.year }}</span>
+                                        {% endif %}
+                                    </span>
+                                    <span class="poster-hover-details">
+                                        {% if item.genres_text and item.genres_text != "N/A" %}
+                                            <span class="poster-genres">{{ item.genres_text }}</span>
+                                        {% endif %}
+                                        <span class="poster-overview">{{ item.overview }}</span>
+                                    </span>
+                                </span>
                                 <span class="title-card-name">
-                                    {{ item.title or item.name }}
+                                    {{ item.title }}
+                                    {% if item.year and item.year != "N/A" %}
+                                        ({{ item.year }})
+                                    {% endif %}
                                 </span>
                             </label>
                         {% endif %}
@@ -88,18 +111,35 @@
             </h3>
             <div class="poster-grid">
                 {% for item in recommendations %}
-                    <article class="poster-card">
-                        {% if item.poster_url %}
-                            <img src="{{ item.poster_url }}"
-                                 alt="Poster for {{ item.title or item.name }}">
-                        {% else %}
-                            <div class="poster-placeholder">No poster</div>
-                        {% endif %}
-                        <p>{{ item.title or item.name }}</p>
-                        <details>
-                            <summary>View details</summary>
-                            <p>{{ item.overview or "No description available." }}</p>
-                        </details>
+                    <article class="poster-card" tabindex="0">
+                        <div class="poster-art">
+                            {% if item.poster_url %}
+                                <img src="{{ item.poster_url }}"
+                                     alt="Poster for {{ item.title }}">
+                            {% else %}
+                                <div class="poster-placeholder">No poster</div>
+                            {% endif %}
+                            <div class="poster-badges">
+                                {% if item.rating != "N/A" %}
+                                    <span class="poster-rating">★ {{ item.rating }}</span>
+                                {% endif %}
+                                {% if item.year and item.year != "N/A" %}
+                                    <span class="poster-year">{{ item.year }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="poster-hover-details">
+                                {% if item.genres_text and item.genres_text != "N/A" %}
+                                    <p class="poster-genres">{{ item.genres_text }}</p>
+                                {% endif %}
+                                <p class="poster-overview">{{ item.overview }}</p>
+                            </div>
+                        </div>
+                        <p>
+                            {{ item.title }}
+                            {% if item.year and item.year != "N/A" %}
+                                ({{ item.year }})
+                            {% endif %}
+                        </p>
                     </article>
                 {% endfor %}
             </div>
@@ -131,7 +171,9 @@
                     titles.forEach(item => {
                         const button = document.createElement("button");
                         button.type = "button";
-                        button.textContent = item.title;
+                        button.textContent = item.year && item.year !== "N/A"
+                            ? `${item.title} (${item.year})`
+                            : item.title;
                         button.addEventListener("click", () => {
                             input.value = item.title;
                             suggestions.replaceChildren();
