@@ -35,7 +35,6 @@ body {
 }
 
 /* ============ Header ============ */
-
 .site-header {
     display: flex;
     justify-content: space-between;
@@ -58,6 +57,7 @@ body {
 }
 
 .brand-mark {
+    padding: 4px;
     display: grid;
     place-items: center;
     width: 32px;
@@ -93,7 +93,7 @@ nav a:hover {
 
 .page-content > h1 {
     margin-bottom: 12px;
-    font-size: clamp(2rem, 5vw, 3rem);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
     letter-spacing: -1px;
 }
 
@@ -187,12 +187,11 @@ nav a:hover {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 8px;
     margin: 18px 0 24px;
 }
 
 .feature-form label {
-    margin-top: 4px;
     color: var(--accent);
     font-size: 0.9rem;
 }
@@ -235,7 +234,7 @@ select option:checked {
 .feature-form button {
     align-self: flex-start;
     min-height: 42px;
-    margin-top: 6px;
+    margin-top: 0;
     padding: 8px 20px;
     border: 0;
     border-radius: 8px;
@@ -281,12 +280,26 @@ select option:checked {
     pointer-events: none;
 }
 
-.title-card-poster {
+.poster-art {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 2 / 3;
+    border-radius: 6px;
+    background: var(--secondary);
+    box-shadow: 0 4px 12px var(--poster-shadow);
+}
+
+.poster-art > img {
     display: block;
     width: 100%;
-    aspect-ratio: 2 / 3;
+    height: 100%;
     object-fit: cover;
     background: #1a2027;
+}
+
+.poster-art > .poster-placeholder {
+    width: 100%;
+    height: 100%;
 }
 
 .poster-placeholder {
@@ -308,6 +321,9 @@ select option:checked {
 
 .search-box {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .search-suggestions {
@@ -353,17 +369,12 @@ select option:checked {
 
 .poster-card {
     min-width: 0;
+    outline: none;
 }
 
-.poster-card img,
-.poster-placeholder {
-    display: block;
-    width: 100%;
-    aspect-ratio: 2 / 3;
-    object-fit: cover;
-    border-radius: 6px;
-    background: var(--secondary);
-    box-shadow: 0 4px 12px var(--poster-shadow);
+.poster-card:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
 }
 
 .poster-placeholder {
@@ -378,20 +389,92 @@ select option:checked {
     font-size: 0.95rem;
 }
 
-.poster-card details {
-    color: var(--muted);
-    font-size: 0.9rem;
+.poster-badges {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
 }
 
-.poster-card summary {
-    color: var(--accent);
-    cursor: pointer;
-    font-weight: 600;
+.poster-rating,
+.poster-year {
+    padding: 3px 7px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(6, 6, 9, 0.82);
+    color: var(--text);
+    font-size: 0.75rem;
+    font-weight: 700;
 }
 
-.poster-card details p {
-    margin-top: 6px;
+.poster-rating {
+    color: #ffd447;
+}
+
+.poster-hover-details {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 6px;
+    padding: 12px;
+    background: linear-gradient(
+        transparent 15%,
+        rgba(6, 6, 9, 0.72) 48%,
+        rgba(6, 6, 9, 0.96)
+    );
+    color: var(--text);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px);
+    transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 180ms;
+}
+
+.poster-hover-details .poster-genres {
+    color: #ffd447;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.poster-hover-details .poster-overview {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0;
     color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    -webkit-box-orient: vertical;
+    line-clamp: 5;
+    -webkit-line-clamp: 5;
+}
+
+.poster-card:hover .poster-hover-details,
+.poster-card:focus-visible .poster-hover-details,
+.title-card:hover .poster-hover-details,
+.title-card:focus-within .poster-hover-details {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition-delay: 0s;
+}
+
+@media (hover: none) {
+    .poster-hover-details {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        background: linear-gradient(
+            transparent 15%,
+            rgba(6, 6, 9, 0.72) 48%,
+            rgba(6, 6, 9, 0.96)
+        );
+        transition: none;
+    }
 }
 
 /* ============ Mobile ============ */
