@@ -109,7 +109,7 @@ def get_trending(content_type: str) -> list:
     ][:10]
     return [to_card(item, content_type) for item in results]
 
-def get_surprise(content_type: str, min_rating: float, min_votes: int) -> list:
+def get_surprise(content_type: str, min_rating: float, min_votes: int) -> dict:
     """Pick a random well-rated title from a random discover page."""
     data = get_json(f"/discover/{content_type}", {
         "sort_by": "vote_average.desc",
@@ -119,7 +119,7 @@ def get_surprise(content_type: str, min_rating: float, min_votes: int) -> list:
     })
     results = data.get("results", [])
     if not results:
-        return []
+        return {}
     return to_card(random.choice(results), content_type)
 
 # ============ Routes ============
@@ -206,7 +206,7 @@ def surprise_page(request: Request):
         context={
             "title": "Surprise Me",
             "content_type": "movie",
-            "surprise_items": None,
+            "surprise_item": None,
         },
     )
 
@@ -225,7 +225,7 @@ def surprise_action(
             "content_type": content_type,
             "min_rating": min_rating,
             "min_votes": min_votes,
-            "surprise_items": get_surprise(content_type, min_rating, min_votes),
+            "surprise_item": get_surprise(content_type, min_rating, min_votes),
         },
     )
 
@@ -235,7 +235,7 @@ async def suggest_titles(q: str = "", content_type: str = "movie"):
         return JSONResponse([])
     results = search_titles(q, content_type)  # ipasa ang content_type
     titles = [
-        {"title": item["title"]}  # 'title' palagi dahil sa to_card
+        {"title": item["title"], "year": item["year"]}
         for item in results[:8]
     ]
     return JSONResponse(titles)
