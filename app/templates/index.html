@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
-    <title>{{ title }}</title>
+    <title>CineMatch — Movie & TV Show Recommender</title>
 </head>
 <body>
     <header class="site-header">
         <a class="brand" href="/">
-            <span class="brand-mark">C</span>
+            <img
+                class="brand-mark"
+                src="{{ url_for('static', path='img/icons/clapperboard.svg') }}"
+                alt=""
+            >
             <span>CineMatch</span>
         </a>
 
@@ -21,7 +25,7 @@
     </header>
 
     <main class="page-content">
-        <h1>Find your next<br>favorite story.</h1>
+        <h1>Discover Movies/TV Shows You'll Love</h1>
         <p class="tagline">
             Choose a feature to get started.
         </p>
