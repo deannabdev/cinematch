@@ -3,25 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}?v=20261113-1641">
     <title>CineMatch — Movie & TV Show Recommender</title>
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="/">
-            <img
-                class="brand-mark"
-                src="{{ url_for('static', path='img/icons/clapperboard.svg') }}"
-                alt=""
-            >
-            <span>CineMatch</span>
-        </a>
+        <div class="site-header-inner">
+            <a class="brand" href="/">
+                <img
+                    class="brand-mark"
+                    src="{{ url_for('static', path='img/icons/clapperboard.svg') }}"
+                    alt=""
+                >
+                <span>CineMatch</span>
+            </a>
 
-        <nav aria-label="Main navigation">
-            <a href="/similar">Find Similar</a>
-            <a href="/trending">Trending Today</a>
-            <a href="/surprise">Surprise Me</a>
-        </nav>
+            <nav aria-label="Main navigation">
+                <a href="/similar">Find Similar</a>
+                <a href="/trending">Trending Today</a>
+                <a href="/surprise">Surprise Me</a>
+            </nav>
+        </div>
     </header>
 
     <main class="page-content">
@@ -47,5 +49,8 @@
             </a>
         </div>
     </main>
+    <footer class="site-footer">
+        <div class="site-footer-inner">CineMatch</div>
+    </footer>
 </body>
 </html>
