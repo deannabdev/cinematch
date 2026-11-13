@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}?v=20261113-1641">
+    <title>{{ details.title }} — CineMatch</title>
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a class="brand" href="/">
+                <img
+                    class="brand-mark"
+                    src="{{ url_for('static', path='img/icons/clapperboard.svg') }}"
+                    alt=""
+                >
+                <span>CineMatch</span>
+            </a>
+
+            <nav aria-label="Main navigation">
+                <a href="/similar">Find Similar</a>
+                <a href="/trending">Trending Today</a>
+                <a href="/surprise">Surprise Me</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page-content detail-page">
+        <a class="detail-back-link" href="/similar">← Back to CineMatch</a>
+        <section class="detail-hero">
+            {% if details.backdrop_url %}
+                <div class="detail-backdrop">
+                    <img src="{{ details.backdrop_url }}" alt="">
+                </div>
+            {% endif %}
+
+            <div class="detail-content">
+                <div class="detail-poster">
+                    {% if details.poster_url %}
+                        <img src="{{ details.poster_url }}"
+                             alt="Poster for {{ details.title }}">
+                    {% else %}
+                        <div class="poster-placeholder">No poster</div>
+                    {% endif %}
+                </div>
+
+                <div class="detail-copy">
+                    <p class="detail-type">
+                        {{ "TV Series" if content_type == "tv" else "Movie" }}
+                    </p>
+                    <h1>
+                        {{ details.title }}
+                        {% if details.year and details.year != "N/A" %}
+                            <span>({{ details.year }})</span>
+                        {% endif %}
+                    </h1>
+                    {% if details.tagline %}
+                        <p class="detail-tagline">{{ details.tagline }}</p>
+                    {% endif %}
+
+                    <div class="detail-facts" aria-label="Title details">
+                        {% if details.rating != "N/A" %}
+                            <span class="detail-rating">★ {{ details.rating }}</span>
+                        {% endif %}
+                        {% if details.release_date and details.release_date != "N/A" %}
+                            <span>Released {{ details.release_date }}</span>
+                        {% endif %}
+                        {% if content_type == "movie" and details.runtime %}
+                            <span>{{ details.runtime }}</span>
+                        {% elif content_type == "tv" %}
+                            {% if details.number_of_seasons %}
+                                <span>{{ details.number_of_seasons }} season{{ "" if details.number_of_seasons == 1 else "s" }}</span>
+                            {% endif %}
+                            {% if details.number_of_episodes %}
+                                <span>{{ details.number_of_episodes }} episode{{ "" if details.number_of_episodes == 1 else "s" }}</span>
+                            {% endif %}
+                            {% if details.status %}
+                                <span>{{ details.status }}</span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
+                    {% if details.genres_text and details.genres_text != "N/A" %}
+                        <p class="detail-genres">{{ details.genres_text }}</p>
+                    {% endif %}
+
+                    <section class="detail-overview">
+                        <h2>Overview</h2>
+                        <p>{{ details.overview }}</p>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="site-footer">
+        <div class="site-footer-inner">CineMatch</div>
+    </footer>
+</body>
+</html>
