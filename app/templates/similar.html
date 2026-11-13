@@ -3,57 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}?v=20261113-1641">
     <title>CineMatch — Movie & TV Show Recommender</title>
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="/">
-            <img
-                class="brand-mark"
-                src="{{ url_for('static', path='img/icons/clapperboard.svg') }}"
-                alt=""
-            >
-            <span>CineMatch</span>
-        </a>
+        <div class="site-header-inner">
+            <a class="brand" href="/">
+                <img
+                    class="brand-mark"
+                    src="{{ url_for('static', path='img/icons/clapperboard.svg') }}"
+                    alt=""
+                >
+                <span>CineMatch</span>
+            </a>
 
-        <nav aria-label="Main navigation">
-            <a href="/similar">Find Similar</a>
-            <a href="/trending">Trending Today</a>
-            <a href="/surprise">Surprise Me</a>
-        </nav>
+            <nav aria-label="Main navigation">
+                <a href="/similar">Find Similar</a>
+                <a href="/trending">Trending Today</a>
+                <a href="/surprise">Surprise Me</a>
+            </nav>
+        </div>
     </header>
 
     <main class="page-content">
-        <h1 style="font-size: 40px">Find Similar Movies &amp; TV Shows</h1>
-        <p class="tagline">Search a title and get similar recommendations.</p>
+        <section class="feature-hero">
+            <h1>Find Similar Movies &amp; TV Shows</h1>
+            <p class="tagline">Search a title and get similar recommendations.</p>
 
-        <form action="/similar" method="post" class="feature-form">
-            <input type="hidden" name="action" value="search">
+            <form action="/similar" method="post" class="feature-form">
+                <input type="hidden" name="action" value="search">
 
-            <label for="content-type">Choose a type:</label>
-            <select id="content-type" name="content_type">
-                <option value="movie"
-                    {% if content_type|default('movie') == 'movie' %}selected{% endif %}>
-                    Movies
-                </option>
-                <option value="tv"
-                    {% if content_type|default('movie') == 'tv' %}selected{% endif %}>
-                    TV shows
-                </option>
-            </select>
+                <label for="content-type">Choose a type:</label>
+                <select id="content-type" name="content_type">
+                    <option value="movie"
+                        {% if content_type|default('movie') == 'movie' %}selected{% endif %}>
+                        Movies
+                    </option>
+                    <option value="tv"
+                        {% if content_type|default('movie') == 'tv' %}selected{% endif %}>
+                        TV shows
+                    </option>
+                </select>
 
-            <div class="search-box">
-                <label for="movie-title">Search for a title:</label>
-                <input id="movie-title" type="text" name="movie_title"
-                       value="{{ movie_title|default('') }}"
-                       placeholder="Enter a movie or TV show" required
-                       autocomplete="off">
-                <div id="search-suggestions" class="search-suggestions"></div>
-            </div>
+                <div class="search-box">
+                    <label for="movie-title">Search for a title:</label>
+                    <input id="movie-title" type="text" name="movie_title"
+                           value="{{ movie_title|default('') }}"
+                           placeholder="Enter a movie or TV show" required
+                           autocomplete="off">
+                    <div id="search-suggestions" class="search-suggestions"></div>
+                </div>
 
-            <button type="submit">Search</button>
-        </form>
+                <button type="submit">Search</button>
+            </form>
+        </section>
 
         {% if search_results %}
             <h3>Select a title</h3>
@@ -67,35 +71,38 @@
                 <div class="title-results">
                     {% for item in search_results %}
                         {% if item.poster_url %}
-                            <label class="title-card">
-                                <input type="radio" name="selected_id"
+                            <article class="title-card">
+                                <input id="title-{{ item.id }}" type="radio" name="selected_id"
                                     value="{{ item.id }}" required>
-                                <span class="poster-art">
-                                    <img class="title-card-poster"
+                                <div class="poster-art">
+                                    <label class="title-card-poster" for="title-{{ item.id }}">
+                                        <img
                                         src="{{ item.poster_url }}"
                                         alt="Poster for {{ item.title }}">
-                                    <span class="poster-badges">
-                                        {% if item.rating != "N/A" %}
-                                            <span class="poster-rating">★ {{ item.rating }}</span>
+                                        <span class="poster-badges">
+                                            {% if item.rating != "N/A" %}
+                                                <span class="poster-rating">★ {{ item.rating }}</span>
+                                            {% endif %}
+                                        </span>
+                                    </label>
+                                    <div class="poster-hover-details">
+                                        <p class="poster-synopsis">{{ item.overview }}</p>
+                                        {% if item.detail_summary %}
+                                            <p class="poster-extra-details">{{ item.detail_summary }}</p>
                                         {% endif %}
-                                        {% if item.year and item.year != "N/A" %}
-                                            <span class="poster-year">{{ item.year }}</span>
-                                        {% endif %}
-                                    </span>
-                                    <span class="poster-hover-details">
-                                        {% if item.genres_text and item.genres_text != "N/A" %}
-                                            <span class="poster-genres">{{ item.genres_text }}</span>
-                                        {% endif %}
-                                        <span class="poster-overview">{{ item.overview }}</span>
-                                    </span>
-                                </span>
-                                <span class="title-card-name">
+                                        <a class="poster-view-details" href="{{ item.detail_url }}"
+                                           aria-label="View details for {{ item.title }}">
+                                            View Details
+                                        </a>
+                                    </div>
+                                </div>
+                                <label class="title-card-name" for="title-{{ item.id }}">
                                     {{ item.title }}
                                     {% if item.year and item.year != "N/A" %}
                                         ({{ item.year }})
                                     {% endif %}
-                                </span>
-                            </label>
+                                </label>
+                            </article>
                         {% endif %}
                     {% endfor %}
                 </div>
@@ -105,11 +112,11 @@
         {% endif %}
 
         {% if recommendations %}
-            <h3>
+            <h3 class="poster-section-heading">
                 Top recommended
-                {% if content_type == "tv" %}TV shows{% else %}movies{% endif %}:
+                {% if content_type == "tv" %}TV shows{% else %}movies{% endif %}
             </h3>
-            <div class="poster-grid">
+            <div class="poster-grid poster-grid--reference-size poster-grid--centered">
                 {% for item in recommendations %}
                     <article class="poster-card" tabindex="0">
                         <div class="poster-art">
@@ -123,15 +130,16 @@
                                 {% if item.rating != "N/A" %}
                                     <span class="poster-rating">★ {{ item.rating }}</span>
                                 {% endif %}
-                                {% if item.year and item.year != "N/A" %}
-                                    <span class="poster-year">{{ item.year }}</span>
-                                {% endif %}
                             </div>
                             <div class="poster-hover-details">
-                                {% if item.genres_text and item.genres_text != "N/A" %}
-                                    <p class="poster-genres">{{ item.genres_text }}</p>
+                                <p class="poster-synopsis">{{ item.overview }}</p>
+                                {% if item.detail_summary %}
+                                    <p class="poster-extra-details">{{ item.detail_summary }}</p>
                                 {% endif %}
-                                <p class="poster-overview">{{ item.overview }}</p>
+                                <a class="poster-view-details" href="{{ item.detail_url }}"
+                                   aria-label="View details for {{ item.title }}">
+                                    View Details
+                                </a>
                             </div>
                         </div>
                         <p>
@@ -145,6 +153,9 @@
             </div>
         {% endif %}
     </main>
+    <footer class="site-footer">
+        <div class="site-footer-inner">CineMatch</div>
+    </footer>
 
     <script>
         const input = document.querySelector("#movie-title");
