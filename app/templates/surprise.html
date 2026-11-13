@@ -3,84 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}?v=20261113-1641">
     <title>CineMatch — Movie & TV Show Recommender</title>
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="/">
-            <img
-                class="brand-mark"
-                src="{{ url_for('static', path='img/icons/clapperboard.svg') }}"
-                alt=""
-            >
-            <span>CineMatch</span>
-        </a>
+        <div class="site-header-inner">
+            <a class="brand" href="/">
+                <img
+                    class="brand-mark"
+                    src="{{ url_for('static', path='img/icons/clapperboard.svg') }}"
+                    alt=""
+                >
+                <span>CineMatch</span>
+            </a>
 
-        <nav aria-label="Main navigation">
-            <a href="/similar">Find Similar</a>
-            <a href="/trending">Trending Today</a>
-            <a href="/surprise">Surprise Me</a>
-        </nav>
+            <nav aria-label="Main navigation">
+                <a href="/similar">Find Similar</a>
+                <a href="/trending">Trending Today</a>
+                <a href="/surprise">Surprise Me</a>
+            </nav>
+        </div>
     </header>
 
     <main class="page-content">
-        <h1>Surprise Me</h1>
-        <p class="tagline">Get a random recommendation filtered by rating and vote count.</p>
+        <section class="feature-hero">
+            <h1>Surprise Me</h1>
+            <p class="tagline">Get a random recommendation filtered by rating and vote count.</p>
 
-        <form action="/surprise" method="post" class="feature-form">
-            <label for="surprise-type">Choose a type:</label>
-            <select id="surprise-type" name="content_type">
-                <option value="movie">Movies</option>
-                <option value="tv">TV shows</option>
-            </select>
+            <form action="/surprise" method="post" class="feature-form">
+                <label for="surprise-type">Choose a type:</label>
+                <select id="surprise-type" name="content_type">
+                    <option value="movie">Movies</option>
+                    <option value="tv">TV shows</option>
+                </select>
 
-            <label for="min-rating">Minimum rating:</label>
-            <input id="min-rating" type="number" name="min_rating"
-                   min="0" max="10" step="0.1" value="7">
+                <label for="min-rating">Minimum rating:</label>
+                <input id="min-rating" type="number" name="min_rating"
+                       min="0" max="10" step="0.1" value="7">
 
-            <label for="min-votes">Minimum votes:</label>
-            <input id="min-votes" type="number" name="min_votes"
-                   min="0" value="100">
+                <label for="min-votes">Minimum votes:</label>
+                <input id="min-votes" type="number" name="min_votes"
+                       min="0" value="100">
 
-            <button type="submit">Surprise Me</button>
-        </form>
+                <button type="submit">Surprise Me</button>
+            </form>
+        </section>
 
-        {% if surprise_item %}
-            <h3>Recommendation for you:</h3>
-            <div class="poster-grid">
-                <article class="poster-card" tabindex="0">
-                    <div class="poster-art">
-                        {% if surprise_item.poster_url %}
-                            <img src="{{ surprise_item.poster_url }}"
-                                 alt="Poster for {{ surprise_item.title }}">
-                        {% else %}
-                            <div class="poster-placeholder">No poster</div>
-                        {% endif %}
-                        <div class="poster-badges">
-                            {% if surprise_item.rating != "N/A" %}
-                                <span class="poster-rating">★ {{ surprise_item.rating }}</span>
+        {% if surprise_items %}
+            <h3 class="poster-section-heading">Recommendations for you:</h3>
+            <div class="poster-grid poster-grid--reference-size poster-grid--centered">
+                {% for item in surprise_items %}
+                    <article class="poster-card" tabindex="0">
+                        <div class="poster-art">
+                            {% if item.poster_url %}
+                                <img src="{{ item.poster_url }}"
+                                     alt="Poster for {{ item.title }}">
+                            {% else %}
+                                <div class="poster-placeholder">No poster</div>
                             {% endif %}
-                            {% if surprise_item.year and surprise_item.year != "N/A" %}
-                                <span class="poster-year">{{ surprise_item.year }}</span>
-                            {% endif %}
+                            <div class="poster-badges">
+                                {% if item.rating != "N/A" %}
+                                    <span class="poster-rating">★ {{ item.rating }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="poster-hover-details">
+                                <p class="poster-synopsis">{{ item.overview }}</p>
+                                {% if item.detail_summary %}
+                                    <p class="poster-extra-details">{{ item.detail_summary }}</p>
+                                {% endif %}
+                                <a class="poster-view-details" href="{{ item.detail_url }}"
+                                   aria-label="View details for {{ item.title }}">
+                                    View Details
+                                </a>
+                            </div>
                         </div>
-                        <div class="poster-hover-details">
-                            {% if surprise_item.genres_text and surprise_item.genres_text != "N/A" %}
-                                <p class="poster-genres">{{ surprise_item.genres_text }}</p>
+                        <p>
+                            {{ item.title }}
+                            {% if item.year and item.year != "N/A" %}
+                                ({{ item.year }})
                             {% endif %}
-                            <p class="poster-overview">{{ surprise_item.overview }}</p>
-                        </div>
-                    </div>
-                    <p>
-                        {{ surprise_item.title }}
-                        {% if surprise_item.year and surprise_item.year != "N/A" %}
-                            ({{ surprise_item.year }})
-                        {% endif %}
-                    </p>
-                </article>
+                        </p>
+                    </article>
+                {% endfor %}
             </div>
         {% endif %}
     </main>
+    <footer class="site-footer">
+        <div class="site-footer-inner">CineMatch</div>
+    </footer>
 </body>
 </html>
